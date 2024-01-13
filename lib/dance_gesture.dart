@@ -7,12 +7,12 @@ class DanceGesture extends StatefulWidget {
   const DanceGesture({
     Key? key,
     required this.child,
-    this.onAddNotes,
-    this.onSingleTap,
+    this.onDoubleTap,
+    this.onStop,
   }) : super(key: key);
 
-  final Function? onAddNotes;
-  final Function? onSingleTap;
+  final Function? onDoubleTap;
+  final Function? onStop;
   final Widget child;
 
   @override
@@ -60,13 +60,12 @@ class _DanceGestureState extends State<DanceGesture> {
         setState(() {
           if (canAddNotes) {
             icons.add(_p(detail.globalPosition));
-            widget.onAddNotes?.call();
+            widget.onDoubleTap?.call();
             justAddNotes = true;
           } else {
             justAddNotes = false;
           }
         });
-        widget.onAddNotes?.call();
       },
       onTapUp: (detail) {
         timer?.cancel();
@@ -74,9 +73,7 @@ class _DanceGestureState extends State<DanceGesture> {
         timer = Timer(Duration(milliseconds: delay), () {
           canAddNotes = false;
           timer = null;
-          // if (!justAddNotes) {
-          widget.onSingleTap?.call();
-          // }
+          widget.onStop?.call();
         });
         canAddNotes = true;
       },

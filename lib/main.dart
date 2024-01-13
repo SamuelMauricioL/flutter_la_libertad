@@ -76,8 +76,8 @@ class _ViewState extends State<View> {
   @override
   Widget build(BuildContext context) {
     return DanceGesture(
-      onAddNotes: () => toggleDance(true),
-      onSingleTap: () => toggleDance(false),
+      onDoubleTap: () => toggleDance(true),
+      onStop: () => toggleDance(false),
       child: Scaffold(
         appBar: AppBar(
           title: Image.asset(
