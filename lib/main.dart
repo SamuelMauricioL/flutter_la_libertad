@@ -16,6 +16,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: View(),
     );
   }
@@ -88,8 +89,6 @@ class _ViewState extends State<View> {
         body: riveArtboard == null
             ? const SizedBox()
             : GestureDetector(
-                // onTap: () => _dashDance(true),
-                // onTapUp: (_) => _dashDance(false),
                 child: Column(
                   children: [
                     Expanded(
@@ -97,23 +96,6 @@ class _ViewState extends State<View> {
                         artboard: riveArtboard!,
                       ),
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   crossAxisAlignment: CrossAxisAlignment.center,
-                    //   children: [
-                    //     const Text('Dance'),
-                    //     Switch(
-                    //       value: isDance!.value,
-                    //       onChanged: (value) => toggleDance(value),
-                    //     ),
-                    //   ],
-                    // ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      child: const Text('Look up'),
-                      onPressed: () => isLookUp?.value = true,
-                    ),
-                    const SizedBox(height: 12),
                   ],
                 ),
               ),
