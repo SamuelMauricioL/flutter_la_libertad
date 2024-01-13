@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +45,6 @@ class _ViewState extends State<View> {
   void initState() {
     super.initState();
     _loadDashAnimation();
-    _setCounter();
   }
 
   void _loadDashAnimation() {
@@ -74,28 +72,13 @@ class _ViewState extends State<View> {
     setState(() => isDance!.value = newValue);
   }
 
-  CollectionReference taps = FirebaseFirestore.instance.collection('taps');
-  int counter = 0;
-
-  Future<void> _setCounter() async {
-    final tapQuery = await taps.get();
-    final tapDoc = tapQuery.docs;
-
-    final tapDataFormated = json.encode(tapDoc.first.data());
-    final tapDataDecoded = json.decode(tapDataFormated);
-    setState(() {
-      counter = tapDataDecoded['counter'] as int;
-    });
-  }
+  final tapsDoc =
+      FirebaseFirestore.instance.collection('taps').doc('p5UfoBHiNV1c58T2RpVD');
 
   Future<void> addTap() async {
-    final tapQuery = await taps.get();
-    final tapDoc = tapQuery.docs;
-
-    taps.doc(tapDoc.first.id).set({
-      'counter': counter += 1,
-    });
-    await _setCounter();
+    DocumentSnapshot doc = await tapsDoc.get();
+    int counter = doc['counter'] as int;
+    tapsDoc.update({'counter': counter + 1});
   }
 
   @override
@@ -124,9 +107,17 @@ class _ViewState extends State<View> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const NoteIcon(size: 30),
-                        Text(
-                          counter.toString(),
-                          style: const TextStyle(fontSize: 26),
+                        StreamBuilder(
+                          stream: tapsDoc.snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                snapshot.data!['counter'].toString(),
+                                style: const TextStyle(fontSize: 26),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
                         ),
                       ],
                     ),
