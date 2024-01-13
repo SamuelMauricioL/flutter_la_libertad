@@ -1,4 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_la_libertad/utils/debouncer.dart';
+import 'package:rive/rive.dart';
 
 void main() {
   runApp(const App());
@@ -23,36 +28,91 @@ class View extends StatefulWidget {
 }
 
 class _ViewState extends State<View> {
-  bool isLiked = false;
+  Artboard? riveArtboard;
+  SMIBool? isDance;
+  SMITrigger? isLookUp;
 
-  void onLikePressed() {
-    setState(() {
-      isLiked = !isLiked;
+  @override
+  void initState() {
+    super.initState();
+    _loadDashAnimation();
+  }
+
+  final debouncer = Debouncer(milliseconds: 1000);
+  void _dashDance(bool dance) {
+    debouncer.run(() {
+      print('dance: $dance');
+      setState(() => isDance?.value = dance);
     });
+  }
+
+  void _loadDashAnimation() {
+    rootBundle.load('assets/dash.riv').then(
+      (data) async {
+        try {
+          final file = RiveFile.import(data);
+          final artboard = file.mainArtboard;
+          var controller =
+              StateMachineController.fromArtboard(artboard, 'birb');
+          if (controller != null) {
+            artboard.addController(controller);
+            isDance = controller.findSMI('dance');
+            isLookUp = controller.findSMI('look up');
+          }
+          setState(() => riveArtboard = artboard);
+        } catch (e) {
+          print(e);
+        }
+      },
+    );
+  }
+
+  void toggleDance(bool newValue) {
+    setState(() => isDance!.value = newValue);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flutter La Libertad"),
-        backgroundColor: Colors.amber,
+        title: Image.asset(
+          'assets/flutter_la_libertad.png',
+          width: 140,
+        ),
+        backgroundColor: Colors.white,
       ),
-      body: Column(
-        children: [
-          Image.asset(
-            'assets/flutter_la_libertad.png',
-          ),
-          GestureDetector(
-            onDoubleTap: () => onLikePressed(),
-            child: Icon(
-              Icons.favorite,
-              size: 40,
-              color: isLiked ? Colors.red : Colors.black54,
+      body: riveArtboard == null
+          ? const SizedBox()
+          : GestureDetector(
+              onTap: () => _dashDance(true),
+              onTapUp: (_) => _dashDance(false),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Rive(
+                      artboard: riveArtboard!,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text('Dance'),
+                      Switch(
+                        value: isDance!.value,
+                        onChanged: (value) => toggleDance(value),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    child: const Text('Look up'),
+                    onPressed: () => isLookUp?.value = true,
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }
