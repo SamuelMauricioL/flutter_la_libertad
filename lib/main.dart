@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_la_libertad/dance_gesture.dart';
 import 'package:flutter_la_libertad/utils/debouncer.dart';
 import 'package:rive/rive.dart';
 
@@ -73,46 +74,50 @@ class _ViewState extends State<View> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Image.asset(
-          'assets/flutter_la_libertad.png',
-          width: 140,
+    return DanceGesture(
+      onAddNotes: () => toggleDance(true),
+      onSingleTap: () => toggleDance(false),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/flutter_la_libertad.png',
+            width: 140,
+          ),
+          backgroundColor: Colors.white,
         ),
-        backgroundColor: Colors.white,
-      ),
-      body: riveArtboard == null
-          ? const SizedBox()
-          : GestureDetector(
-              onTap: () => _dashDance(true),
-              onTapUp: (_) => _dashDance(false),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Rive(
-                      artboard: riveArtboard!,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text('Dance'),
-                      Switch(
-                        value: isDance!.value,
-                        onChanged: (value) => toggleDance(value),
+        body: riveArtboard == null
+            ? const SizedBox()
+            : GestureDetector(
+                // onTap: () => _dashDance(true),
+                // onTapUp: (_) => _dashDance(false),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Rive(
+                        artboard: riveArtboard!,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    child: const Text('Look up'),
-                    onPressed: () => isLookUp?.value = true,
-                  ),
-                  const SizedBox(height: 12),
-                ],
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   crossAxisAlignment: CrossAxisAlignment.center,
+                    //   children: [
+                    //     const Text('Dance'),
+                    //     Switch(
+                    //       value: isDance!.value,
+                    //       onChanged: (value) => toggleDance(value),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      child: const Text('Look up'),
+                      onPressed: () => isLookUp?.value = true,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }
