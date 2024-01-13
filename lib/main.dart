@@ -1,12 +1,19 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_la_libertad/dance_gesture.dart';
-import 'package:flutter_la_libertad/utils/debouncer.dart';
+import 'package:flutter_la_libertad/firebase_options.dart';
 import 'package:rive/rive.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const App());
 }
 
@@ -38,14 +45,7 @@ class _ViewState extends State<View> {
   void initState() {
     super.initState();
     _loadDashAnimation();
-  }
-
-  final debouncer = Debouncer(milliseconds: 1000);
-  void _dashDance(bool dance) {
-    debouncer.run(() {
-      print('dance: $dance');
-      setState(() => isDance?.value = dance);
-    });
+    _setCounter();
   }
 
   void _loadDashAnimation() {
@@ -73,11 +73,38 @@ class _ViewState extends State<View> {
     setState(() => isDance!.value = newValue);
   }
 
+  CollectionReference taps = FirebaseFirestore.instance.collection('taps');
+  int counter = 0;
+
+  Future<void> _setCounter() async {
+    final tapQuery = await taps.get();
+    final tapDoc = tapQuery.docs;
+
+    final tapDataFormated = json.encode(tapDoc.first.data());
+    final tapDataDecoded = json.decode(tapDataFormated);
+    setState(() {
+      counter = tapDataDecoded['counter'] as int;
+    });
+  }
+
+  Future<void> addTap() async {
+    final tapQuery = await taps.get();
+    final tapDoc = tapQuery.docs;
+
+    taps.doc(tapDoc.first.id).set({
+      'counter': counter += 1,
+    });
+    await _setCounter();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DanceGesture(
       onAddNotes: () => toggleDance(true),
-      onSingleTap: () => toggleDance(false),
+      onSingleTap: () {
+        addTap();
+        toggleDance(false);
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Image.asset(
@@ -91,6 +118,7 @@ class _ViewState extends State<View> {
             : GestureDetector(
                 child: Column(
                   children: [
+                    Text(counter.toString()),
                     Expanded(
                       child: Rive(
                         artboard: riveArtboard!,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "86397472805",
+    "project_id": "flutter-la-libertad",
+    "storage_bucket": "flutter-la-libertad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86397472805:android:4fa07418d5ec3cd1dd6fcc",
+        "android_client_info": {
+          "package_name": "com.example.flutter_la_libertad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxLAkJhIjqf5e_5GUPmcdsp-qhV61sXuo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
