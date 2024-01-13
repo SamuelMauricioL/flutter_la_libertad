@@ -44,7 +44,6 @@ class _DanceGestureState extends State<DanceGesture> {
         children: icons
             .map<Widget>(
               (p) => DanceAnimationIcon(
-                key: Key(p.toString()),
                 position: p,
                 onAnimationComplete: () {
                   icons.remove(p);
