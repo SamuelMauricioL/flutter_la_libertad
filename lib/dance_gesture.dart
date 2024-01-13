@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_la_libertad/widgets/note_icon.dart';
 
 class DanceGesture extends StatefulWidget {
   const DanceGesture({
@@ -167,26 +168,6 @@ class _DanceAnimationIconState extends State<DanceAnimationIcon>
 
   @override
   Widget build(BuildContext context) {
-    Widget content = Icon(
-      Icons.music_note_rounded,
-      size: widget.size,
-      color: Colors.blue,
-    );
-    content = ShaderMask(
-      blendMode: BlendMode.srcATop,
-      shaderCallback: (Rect bounds) => RadialGradient(
-        center: Alignment.topLeft.add(
-          const Alignment(0.66, 0.66),
-        ),
-        colors: const [
-          Color(0xFFb41917),
-          Color(0xFFea4421),
-          Color(0xffe94420),
-          Color(0xfffbbe01),
-        ],
-      ).createShader(bounds),
-      child: content,
-    );
     Widget body = Transform.rotate(
       angle: rotate,
       child: Opacity(
@@ -194,7 +175,7 @@ class _DanceAnimationIconState extends State<DanceAnimationIcon>
         child: Transform.scale(
           alignment: Alignment.bottomCenter,
           scale: scale,
-          child: content,
+          child: NoteIcon(size: widget.size),
         ),
       ),
     );

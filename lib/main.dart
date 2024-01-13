@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_la_libertad/dance_gesture.dart';
 import 'package:flutter_la_libertad/firebase_options.dart';
+import 'package:flutter_la_libertad/widgets/note_icon.dart';
 import 'package:rive/rive.dart';
 
 Future<void> main() async {
@@ -100,11 +101,11 @@ class _ViewState extends State<View> {
   @override
   Widget build(BuildContext context) {
     return DanceGesture(
-      onDoubleTap: () => toggleDance(true),
-      onStop: () {
+      onDoubleTap: () {
         addTap();
-        toggleDance(false);
+        toggleDance(true);
       },
+      onStop: () => toggleDance(false),
       child: Scaffold(
         appBar: AppBar(
           title: Image.asset(
@@ -118,7 +119,17 @@ class _ViewState extends State<View> {
             : GestureDetector(
                 child: Column(
                   children: [
-                    Text(counter.toString()),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const NoteIcon(size: 30),
+                        Text(
+                          counter.toString(),
+                          style: const TextStyle(fontSize: 26),
+                        ),
+                      ],
+                    ),
                     Expanded(
                       child: Rive(
                         artboard: riveArtboard!,
